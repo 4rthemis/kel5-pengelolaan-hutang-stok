@@ -1,0 +1,324 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+const int maxPembeli = 100;
+const int maxProduk = 100;
+
+// Variable Pembeli
+int idPembeli[maxPembeli];
+string namaPembeli[maxPembeli];
+string alamatPembeli[maxPembeli];
+string noTelpPembeli[maxPembeli];
+float limitHutangPembeli[maxPembeli];
+string statusPembeli[maxPembeli];
+float hutangPembeli[maxPembeli];
+int totalPembeli = 0;
+
+// Variable Produk
+string kodeProduk[maxProduk];
+string namaProduk[maxProduk];
+int stokProduk[maxProduk];
+int stokMinimalProduk[maxProduk];
+int stokMaksimalProduk[maxProduk];
+int hargaModalProduk[maxProduk];
+int hargaJualProduk[maxProduk];
+int totalProduk = 0;
+
+// Fungsi Deklarasi
+void login();
+void menuAdmin();
+void menuKasir();
+void tambahPembeli();
+void lihatPembeli();
+void tambahProduk();
+void lihatRestock();
+void lihatProduk();
+void transaksiHutang();
+void pembayaranHutang();
+void sisaHutang();
+void barangMasuk();
+void lihatStok();
+
+// Fungsi Utama
+int main() {
+    while (true) {
+        login(); // Kembali ke menu login setelah logout
+    }
+    return 0;
+}
+
+// Fungsi Login
+void login() {
+    string username, password;
+
+    cout << "=== Kelompok 5 - Pengelolaan Hutang dan Stok ===\n";
+    cout << "Nama Pengguna : ";
+    cin >> username;
+    cout << "Kata Sandi : ";
+    cin >> password;
+
+    if (username == "admin" && password == "admin123") {
+        cout << "Login berhasil sebagai Admin.\n";
+        menuAdmin();
+    } else if (username == "kasir" && password == "kasir123") {
+        cout << "Login berhasil sebagai Kasir.\n";
+        menuKasir();
+    } else {
+        cout << "Nama Pengguna atau Kata Sandi salah! Silakan coba lagi.\n";
+    }
+}
+
+// Menu Admin
+void menuAdmin() {
+    int pilihan;
+    do {
+        cout << "\n=== Menu Admin ===\n";
+        cout << "1. Tambah Pembeli\n2. Lihat Daftar Pembeli\n3. Tambah Produk\n4. Lihat Produk Perlu Restock\n0. Logout\n";
+        cout << "Pilih: ";
+        cin >> pilihan;
+
+        switch (pilihan) {
+            case 1: tambahPembeli(); break;
+            case 2: lihatPembeli(); break;
+            case 3: tambahProduk(); break;
+            case 4: lihatRestock(); break;
+            case 0:
+                cout << "Logout berhasil. Kembali ke menu login.\n";
+                return; // Kembali ke login
+            default: cout << "Pilihan tidak valid!\n";
+        }
+    } while (pilihan != 0);
+}
+
+// Menu Kasir
+void menuKasir() {
+    int pilihan;
+    do {
+        cout << "\n=== Menu Kasir ===\n";
+        cout << "1. Lihat Daftar Produk\n2. Transaksi Hutang\n3. Pembayaran Hutang\n4. Sisa Hutang\n5. Barang Masuk\n6. Lihat Stok\n0. Logout\n";
+        cout << "Pilih: ";
+        cin >> pilihan;
+
+        switch (pilihan) {
+            case 1: lihatProduk(); break;
+            case 2: transaksiHutang(); break;
+            case 3: pembayaranHutang(); break;
+            case 4: sisaHutang(); break;
+            case 5: barangMasuk(); break;
+            case 6: lihatStok(); break;
+            case 0:
+                cout << "Logout berhasil. Kembali ke menu login.\n";
+                return; // Kembali ke login
+            default: cout << "Pilihan tidak valid!\n";
+        }
+    } while (pilihan != 0);
+}
+
+// Fungsi Tambah Pembeli
+void tambahPembeli() {
+    if (totalPembeli < maxPembeli) {
+        cout << "\n=== Tambah Pembeli ===\n";
+        cout << "ID Pembeli: ";
+        cin >> idPembeli[totalPembeli];
+        cout << "Nama Pembeli: ";
+        cin >> namaPembeli[totalPembeli];
+        cout << "Alamat: ";
+        cin.ignore(); // Membersihkan buffer input
+        getline(cin, alamatPembeli[totalPembeli]);
+        cout << "Nomor Telepon: ";
+        cin >> noTelpPembeli[totalPembeli];
+        cout << "Limit Hutang: ";
+        cin >> limitHutangPembeli[totalPembeli];
+        hutangPembeli[totalPembeli] = 0; // Hutang awal adalah 0
+        statusPembeli[totalPembeli] = "Aktif";
+
+        totalPembeli++;
+        cout << "Pembeli berhasil ditambahkan!\n";
+    } else {
+        cout << "Data penuh, tidak bisa menambah pembeli lagi.\n";
+    }
+}
+
+// Fungsi Lihat Pembeli
+void lihatPembeli() {
+    cout << "\n=== Daftar Pembeli ===\n";
+    if (totalPembeli == 0) {
+        cout << " Data kosong.\n";
+        return;
+    }
+    for (int i = 0; i < totalPembeli; i++) {
+        cout << "ID: " << idPembeli[i]
+             << ", Nama: " << namaPembeli[i]
+             << ", Status: " << statusPembeli[i] << endl;
+    }
+}
+
+// Fungsi Tambah Produk
+void tambahProduk() {
+    if (totalProduk < maxProduk) {
+        cout << "\n=== Tambah Produk ===\n";
+        cout << "Kode Produk: ";
+        cin >> kodeProduk[totalProduk];
+        cout << "Nama Produk: ";
+        cin >> namaProduk[totalProduk];
+        cout << "Harga Modal: ";
+        cin >> hargaModalProduk[totalProduk];
+        cout << "Harga Jual: ";
+        cin >> hargaJualProduk[totalProduk];
+        cout << "Stok Minimal: ";
+        cin >> stokMinimalProduk[totalProduk];
+        cout << "Stok Maksimal: ";
+        cin >> stokMaksimalProduk[totalProduk];
+
+        int stokAwal;
+        do {
+            cout << "Stok Awal (maksimal " << stokMaksimalProduk[totalProduk] << "): ";
+            cin >> stokAwal;
+            if (stokAwal > stokMaksimalProduk[totalProduk]) {
+                cout << "Error: Stok melebihi batas maksimal!\n";
+            }
+        } while (stokAwal > stokMaksimalProduk[totalProduk]);
+
+        stokProduk[totalProduk] = stokAwal;
+
+        totalProduk++;
+        cout << "Produk berhasil ditambahkan!\n";
+    } else {
+        cout << "Data penuh, tidak bisa menambah produk lagi.\n";
+    }
+}
+
+// Fungsi Lihat Produk Perlu Restock
+void lihatRestock() {
+    cout << "\n=== Produk Perlu Restock ===\n";
+    if (totalProduk == 0) {
+        cout << " Data kosong.\n";
+    }
+    for (int i = 0; i < totalProduk; i++) {
+        if (stokProduk[i] <= stokMinimalProduk[i]) {
+            cout << "Kode: " << kodeProduk[i]
+                 << ", Nama: " << namaProduk[i]
+                 << ", Stok: " << stokProduk[i] << endl;
+        }
+    }
+}
+
+// Fungsi Lihat Produk
+void lihatProduk() {
+    cout << "\n=== Daftar Produk ===\n";
+    if (totalProduk == 0) {
+        cout << " Data produk kosong.\n";
+        return;
+    }
+    for (int i = 0; i < totalProduk; i++) {
+        cout << "Kode: " << kodeProduk[i]
+             << ", Nama: " << namaProduk[i]
+             << ", Stok: " << stokProduk[i]
+             << ", Harga Jual: " << hargaJualProduk[i] << endl;
+    }
+}
+
+// Fungsi Transaksi Hutang
+void transaksiHutang() {
+    cout << "\n=== Transaksi Hutang ===\n";
+    int id;
+    string kode;
+    int jumlah;
+    int jatuhTempo;
+
+    cout << "ID Pembeli: ";
+    cin >> id;
+    cout << "Kode Produk: ";
+    cin >> kode;
+    cout << "Jumlah: ";
+    cin >> jumlah;
+    cout << "Jatuh Tempo (hari): ";
+    cin >> jatuhTempo;
+
+    for (int i = 0; i < totalPembeli; i++) {
+        if (idPembeli[i] == id) {
+            hutangPembeli[i] += jumlah * 100; // Asumsi harga satuan 100
+            cout << "Hutang berhasil dicatat untuk " << namaPembeli[i] << endl;
+            return;
+        }
+    }
+    cout << "ID Pembeli tidak ditemukan.\n";
+}
+
+
+// Fungsi Pembayaran Hutang
+void pembayaranHutang() {
+    cout << "\n=== Pembayaran Hutang ===\n";
+    int id;
+    float bayar;
+
+    cout << "ID Pembeli: ";
+    cin >> id;
+    cout << "Jumlah Pembayaran: ";
+    cin >> bayar;
+
+    for (int i = 0; i < totalPembeli; i++) {
+        if (idPembeli[i] == id) {
+            if (bayar <= hutangPembeli[i]) {
+                hutangPembeli[i] -= bayar;
+                cout << "Pembayaran berhasil untuk " << namaPembeli[i] << endl;
+            } else {
+                cout << "Pembayaran melebihi hutang!\n";
+            }
+            return;
+        }
+    }
+    cout << "ID Pembeli tidak ditemukan.\n";
+}
+
+
+// Fungsi Sisa Hutang
+void sisaHutang() {
+    cout << "\n=== Sisa Hutang ===\n";
+    int id;
+
+    cout << "ID Pembeli: ";
+    cin >> id;
+
+    for (int i = 0; i < totalPembeli; i++) {
+        if (idPembeli[i] == id) {
+            cout << "Sisa hutang untuk " << namaPembeli[i] << ": " << hutangPembeli[i] << endl;
+            return;
+        }
+    }
+    cout << "ID Pembeli tidak ditemukan.\n";
+}
+// Fungsi Barang Masuk
+void barangMasuk() {
+    cout << "\n=== Barang Masuk ===\n";
+    string kode;
+    int jumlah;
+
+    cout << "Kode Produk: ";
+    cin >> kode;
+    cout << "Jumlah Masuk: ";
+    cin >> jumlah;
+
+    for (int i = 0; i < totalProduk; i++) {
+        if (kodeProduk[i] == kode) {
+            stokProduk[i] += jumlah;
+            cout << "Barang berhasil ditambahkan ke stok " << namaProduk[i] << endl;
+            return;
+        }
+    }
+    cout << "Kode Produk tidak ditemukan.\n";
+}
+// Fungsi Lihat Stok
+void lihatStok() {
+    cout << "\n=== Lihat Stok ===\n";
+    if (totalProduk == 0) {
+        cout << "Data stok kosong.\n";
+        return;
+    }
+    for (int i = 0; i < totalProduk; i++) {
+        cout << "Kode: " << kodeProduk[i]
+             << ", Nama: " << namaProduk[i]
+             << ", Stok: " << stokProduk[i] << endl;
+    }
+}
