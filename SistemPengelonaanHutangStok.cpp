@@ -2,6 +2,7 @@
 #include <string>
 using namespace std;
 
+// Asumsi sebuah table pada database
 const int maxPembeli = 100;
 const int maxProduk = 100;
 
@@ -44,6 +45,19 @@ void tambahProduk();
 void aturMarginKeuntungan();
 void lihatRestock();
 
+// ======== Fungsi Kasir =========
+void menuKasir();
+void manajemenTransaksiHutang();
+void manajemenStok();
+// A. Transaksi Hutang
+void tambahTransaksiHutang();
+void tambahPembayaranHutang();
+void lihatSisaHutang();
+
+// B. Manajemen Stok
+void tambahBarangMasuk();
+void lihatStokMenipis();
+
 int main()
 {
     login();
@@ -69,7 +83,7 @@ void login()
     else if (username == "kasir" && password == "kasir123")
     {
         cout << "Masuk berhasil sebagai Kasir.\n";
-        // Menu Kasir
+        menuKasir();
     }
     else
     {
@@ -186,7 +200,7 @@ void tambahPembeli()
         cin >> noTelpPembeli[totalPembeli];
         cout << "Limit Hutang: ";
         cin >> limitHutangPembeli[totalPembeli];
-        hutangPembeli[totalPembeli] = 0; // Hutang awal adalah 0
+        hutangPembeli[totalPembeli] = 0;
         statusPembeli[totalPembeli] = "Aktif";
 
         totalPembeli++;
@@ -346,5 +360,213 @@ void lihatRestock()
                  << ", Nama: " << namaProduk[i]
                  << ", Stok: " << stokProduk[i] << endl;
         }
+    }
+}
+
+void menuKasir()
+{
+    int pilihan;
+    do
+    {
+        cout << "\n=== Menu Kasir ===\n";
+        cout << "Pilih Menu : \n";
+        cout << "1. Manajemen Transaksi Hutang.\n2. Manajemen Stok Produk.\n3. Kembali ke halaman sebelumnya\n4. Keluar\n";
+        cin >> pilihan;
+
+        switch (pilihan)
+        {
+        case 1:
+            manajemenTransaksiHutang();
+            break;
+        case 2:
+            manajemenStok();
+            break;
+        case 3:
+            login();
+            break;
+        case 4:
+            cout << "Keluar berhasil.\n";
+            break;
+        default:
+            cout << "Pilihan tidak valid, silakan coba lagi.\n";
+            break;
+        }
+    } while (pilihan != 4);
+}
+
+void manajemenTransaksiHutang()
+{
+    int pilihan;
+    do
+    {
+        cout << "\n=== [Kasir] Menu Manajemen Transaksi Hutang ===\n";
+        cout << "Pilih Menu : \n";
+        cout << "1. Tambah Transaksi Hutang.\n2. Tambah Pembayaran Hutang.\n3. Lihat Sisa Hutang.\n4. Kembali ke halaman sebelumnya\n5. Keluar\n";
+        cin >> pilihan;
+
+        switch (pilihan)
+        {
+        case 1:
+            tambahTransaksiHutang();
+            break;
+        case 2:
+            tambahPembayaranHutang();
+            break;
+        case 3:
+            lihatSisaHutang();
+            break;
+        case 4:
+            menuKasir();
+            break;
+        case 5:
+            cout << "Keluar berhasil.\n";
+            break;
+        default:
+            cout << "Pilihan tidak valid, silakan coba lagi.\n";
+            break;
+        }
+    } while (pilihan != 5);
+}
+void manajemenStok()
+{
+    int pilihan;
+    do
+    {
+        cout << "\n=== [Kasir] Menu Manajemen Stok ===\n";
+        cout << "Pilih Menu : \n";
+        cout << "1. Tambah Barang Masuk.\n2. Lihat Stok Menipis.\n3. Kembali ke halaman sebelumnya\n4. Keluar\n";
+        cin >> pilihan;
+
+        switch (pilihan)
+        {
+        case 1:
+            tambahBarangMasuk();
+            break;
+        case 2:
+            lihatStokMenipis();
+            break;
+        case 3:
+            menuKasir();
+            break;
+        case 4:
+            cout << "Keluar berhasil.\n";
+            break;
+        default:
+            cout << "Pilihan tidak valid, silakan coba lagi.\n";
+            break;
+        }
+    } while (pilihan != 4);
+}
+void tambahTransaksiHutang()
+{
+    cout << "\n=== Transaksi Hutang ===\n";
+    int id;
+    string kode;
+    int jumlah;
+    int jatuhTempo;
+
+    cout << "ID Pembeli: ";
+    cin >> id;
+    cout << "Kode Produk: ";
+    cin >> kode;
+    cout << "Jumlah: ";
+    cin >> jumlah;
+    cout << "Jatuh Tempo (hari): ";
+    cin >> jatuhTempo;
+
+    for (int i = 0; i < totalPembeli; i++)
+    {
+        if (idPembeli[i] == id)
+        {
+            hutangPembeli[i] += jumlah * hargaJualProduk[i];
+            cout << "Hutang berhasil dicatat untuk " << namaPembeli[i] << endl;
+            return;
+        }
+    }
+    cout << "ID Pembeli tidak ditemukan.\n";
+}
+
+void tambahPembayaranHutang()
+{
+    cout << "\n=== Pembayaran Hutang ===\n";
+    int id;
+    float bayar;
+
+    cout << "ID Pembeli: ";
+    cin >> id;
+    cout << "Jumlah Pembayaran: ";
+    cin >> bayar;
+
+    for (int i = 0; i < totalPembeli; i++)
+    {
+        if (idPembeli[i] == id)
+        {
+            if (bayar <= hutangPembeli[i])
+            {
+                hutangPembeli[i] -= bayar;
+                cout << "Pembayaran berhasil untuk " << namaPembeli[i] << endl;
+            }
+            else
+            {
+                cout << "Pembayaran melebihi hutang!\n";
+            }
+            return;
+        }
+    }
+    cout << "ID Pembeli tidak ditemukan.\n";
+}
+void lihatSisaHutang()
+{
+    cout << "\n=== Sisa Hutang ===\n";
+    int id;
+
+    cout << "ID Pembeli: ";
+    cin >> id;
+
+    for (int i = 0; i < totalPembeli; i++)
+    {
+        if (idPembeli[i] == id)
+        {
+            cout << "Sisa hutang untuk " << namaPembeli[i] << ": " << hutangPembeli[i] << endl;
+            return;
+        }
+    }
+    cout << "ID Pembeli tidak ditemukan.\n";
+}
+void tambahBarangMasuk()
+{
+    cout << "\n=== Barang Masuk ===\n";
+    string kode;
+    int jumlah;
+
+    cout << "Kode Produk: ";
+    cin >> kode;
+    cout << "Jumlah Masuk: ";
+    cin >> jumlah;
+
+    for (int i = 0; i < totalProduk; i++)
+    {
+        if (kodeProduk[i] == kode)
+        {
+            stokProduk[i] += jumlah;
+            cout << "Barang berhasil ditambahkan ke stok " << namaProduk[i] << endl;
+            return;
+        }
+    }
+    cout << "Kode Produk tidak ditemukan.\n";
+}
+void lihatStokMenipis()
+{
+    cout << "\n=== Lihat Stok ===\n";
+    if (totalProduk == 0)
+    {
+        cout << "Data stok kosong.\n";
+        return;
+    }
+    for (int i = 0; i < totalProduk; i++)
+    {
+        cout << "Kode: " << kodeProduk[i]
+             << ", Nama: " << namaProduk[i]
+             << ", Stok: " << stokProduk[i] << endl;
     }
 }
