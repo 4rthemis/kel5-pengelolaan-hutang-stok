@@ -14,6 +14,7 @@ string noTelpPembeli[maxPembeli];
 float limitHutangPembeli[maxPembeli];
 string statusPembeli[maxPembeli];
 float hutangPembeli[maxPembeli];
+string riwayatStatus[maxPembeli];
 int totalPembeli = 0;
 
 // Variable Produk
@@ -53,6 +54,8 @@ void manajemenStok();
 void tambahTransaksiHutang();
 void tambahPembayaranHutang();
 void lihatSisaHutang();
+void catatRiwayatStatus(int id, string statusLama, string statusBaru);
+void lihatRiwayatStatus();
 
 // B. Manajemen Stok
 void tambahBarangMasuk();
@@ -396,12 +399,13 @@ void menuKasir()
 
 void manajemenTransaksiHutang()
 {
+
     int pilihan;
     do
     {
         cout << "\n=== [Kasir] Menu Manajemen Transaksi Hutang ===\n";
         cout << "Pilih Menu : \n";
-        cout << "1. Tambah Transaksi Hutang.\n2. Tambah Pembayaran Hutang.\n3. Lihat Sisa Hutang.\n4. Kembali ke halaman sebelumnya\n5. Keluar\n";
+        cout << "1. Tambah Transaksi Hutang.\n2. Tambah Pembayaran Hutang.\n3. Lihat Sisa Hutang.\n4. Kembali ke halaman sebelumnya\n5. Catat Riwayat Status Pembayaran Hutang.\n6. Lihat Riwayat Status Pembayaran Hutang.\n7. Keluar\n";
         cin >> pilihan;
 
         switch (pilihan)
@@ -419,7 +423,23 @@ void manajemenTransaksiHutang()
             menuKasir();
             break;
         case 5:
-            cout << "Keluar berhasil.\n";
+        {
+            int id;
+            string statusLama, statusBaru;
+
+            cout << "Masukkan ID Pembeli: ";
+            cin >> id;
+            cout << "Masukkan Status Lama: ";
+            cin >> statusLama;
+            cout << "Masukkan Status Baru: ";
+            cin >> statusBaru;
+
+            catatRiwayatStatus(id, statusLama, statusBaru);
+        }
+        break;
+
+        case 6:
+            lihatRiwayatStatus();
             break;
         default:
             cout << "Pilihan tidak valid, silakan coba lagi.\n";
@@ -568,5 +588,39 @@ void lihatStokMenipis()
         cout << "Kode: " << kodeProduk[i]
              << ", Nama: " << namaProduk[i]
              << ", Stok: " << stokProduk[i] << endl;
+    }
+}
+
+void catatRiwayatStatus(int id, string statusLama, string statusBaru)
+{
+    bool found = false;
+    for (int i = 0; i < totalPembeli; i++)
+    {
+        if (idPembeli[i] == id)
+        {
+            found = true;
+            riwayatStatus[i] += "Dari " + statusLama + " ke " + statusBaru + "; ";
+            cout << "Riwayat status berhasil dicatat untuk pembeli " << namaPembeli[i] << endl;
+            return;
+        }
+    }
+    if (!found)
+    {
+        cout << "ID Pembeli tidak ditemukan.\n";
+    }
+}
+
+void lihatRiwayatStatus()
+{
+
+    cout << "\n=== Riwayat Perubahan Status Pembeli ===\n";
+    for (int i = 0; i < totalPembeli; i++)
+    {
+        if (!riwayatStatus[i].empty())
+        {
+            cout << "ID: " << idPembeli[i]
+                 << ", Nama: " << namaPembeli[i]
+                 << ", Riwayat: " << riwayatStatus[i] << endl;
+        }
     }
 }
